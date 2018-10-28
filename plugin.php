@@ -7,8 +7,8 @@ Version: 0.1.0
 Author: Adam Patarino
 Author URI: http://wealthcastmedia.com
 License: GPL2
-Bitbucket Plugin URI : 
-Bitbucker Branch: 
+GitHub Plugin URI: https://github.com/adampatarino/wealthcast-broadstreet
+GitHub Branch: master
 */
 
 if(!class_exists('WP_Plugin_Wealtcast')) {
