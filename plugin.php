@@ -79,9 +79,11 @@ if(!class_exists('WP_Plugin_Wealtcast')) {
 		/**
 		 * WC Display Function
 		 */
-		public function display_zone() {
+		public function display_zone($location) {
+			echo 'location'; var_dump($location);
 			if(!function_exists('get_field')) return '';
 		    $zoneid = get_field($location, 'options');
+			echo 'zoneid'; var_dump($zoneid);
 		    if(!$zoneid) return '';
 		    if($alt) return '<div style="text-align: center;"><broadstreet-zone alt-zone-id="'. $zoneid .'"></broadstreet-zone></div>';
 		    return '<div style="text-align: center;"><broadstreet-zone zone-id="'. $zoneid .'" soft-keywords="true"></broadstreet-zone></div>';
@@ -175,8 +177,8 @@ if(class_exists('WP_Plugin_Wealtcast')) {
 	
 	// Expose display zone function to theme
 	if ( ! function_exists( 'wc_zone' ) ) {
-	    function wc_zone() {
-	       return $wc->display_zone();
+	    function wc_zone($location) {
+	       return WP_Plugin_Wealtcast::display_zone($location);
 	    }
 	}
 }
