@@ -3,7 +3,7 @@
 Plugin Name: Wealthcast
 Plugin URI: 
 Description: Ads via Wealthcast
-Version: 0.1.0
+Version: 0.1.1
 Author: Adam Patarino
 Author URI: http://wealthcastmedia.com
 License: GPL2
@@ -27,46 +27,40 @@ if(!class_exists('WP_Plugin_Wealtcast')) {
 			$this->popouts();
 
 		} // END public function __construct
-
-		/**
-		 * Get keywords
-		 */
-		private static function getKeywords() {
-			global $post;
-			$keywords = array();
-			
-			$categories = get_post_categories($post->ID);
-			foreach($categores as $category) {
-				array_push($keywords, $category);
-			}
-			
-			if(is_home()) {
-				array_push($keywords, 'is_home_page');
-			} else {
-				array_push($keywords, 'not_home_page');
-			}
-			
-			if(is_single()) {
-				array_push($keywords, 'is_article_page');
-			} else {
-				array_push($keywords, 'not_article_page');
-			}
-			
-			return $keywords;
-		}
 		
 		/**
 		 * Add basescript to header
 		 */
-		public static function basescript() {
+		public function basescript() {
 			add_action('wp_head', 'wc_basescript');
-			function wc_basescript() { ?>
+			function wc_basescript() { 
+				global $post;
+				$keywords = array();
+				
+				$categories = get_the_category($post->ID);
+				foreach($categories as $category) {
+					array_push($keywords, $category->slug);
+				}
+				
+				if(is_home()) {
+					array_push($keywords, 'is_home_page');
+				} else {
+					array_push($keywords, 'not_home_page');
+				}
+				
+				if(is_single()) {
+					array_push($keywords, 'is_article_page');
+				} else {
+					array_push($keywords, 'not_article_page');
+				}
+				
+				?>
 				<!-- Wealthcast Init  -->
 				<script src="https://cdn.broadstreetads.com/init-2.min.js" async></script>
 				<script>
 					document.addEventListener('broadstreetLoaded', function () {
 						broadstreet.watch({
-							keywords: [<?php implode(",",$this->getKeywords)?>]
+							keywords: [<?php if($keywords) echo '"'. implode('", "',$keywords) . '"';?>]
 						})
 					});
 				</script>
@@ -85,7 +79,7 @@ if(!class_exists('WP_Plugin_Wealtcast')) {
 		/**
 		 * WC Display Function
 		 */
-		public static function display_zone() {
+		public function display_zone() {
 			if(!function_exists('get_field')) return '';
 		    $zoneid = get_field($location, 'options');
 		    if(!$zoneid) return '';
