@@ -3,7 +3,7 @@
 Plugin Name: Wealthcast
 Plugin URI: 
 Description: Ads via Wealthcast
-Version: 0.1.3
+Version: 0.1.4
 Author: Adam Patarino
 Author URI: http://wealthcastmedia.com
 License: GPL2
@@ -117,8 +117,10 @@ if(!class_exists('WP_Plugin_Wealtcast')) {
 				if(!function_exists('get_field')) echo '';
 			    $po1 = get_field('popout_1', 'options');
 				$po2 = get_field('popout_2', 'options');
+				echo '<div class="wc-popouts" style="display: none;">';
 				if($po1) echo '<broadstreet-zone zone-id="'. $po1 .'" soft-keywords="true"></broadstreet-zone>';
 				if($po2) echo '<broadstreet-zone zone-id="'. $po2 .'" soft-keywords="true"></broadstreet-zone>';
+				echo '</div>';
 			}
 		}
 
