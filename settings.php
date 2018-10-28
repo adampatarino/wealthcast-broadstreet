@@ -1,7 +1,7 @@
 <?php
 add_action('plugins_loaded', 'wealthcast_acf_settings');
 
-function a2pop_acf_settings() {
+function wealthcast_acf_settings() {
     if( function_exists('acf_add_local_field_group') ):
 
     acf_add_local_field_group(array (
@@ -97,7 +97,7 @@ function a2pop_acf_settings() {
     			'label' => 'Footer',
     			'name' => 'footer',
     			'type' => 'text',
-    			'instructions' => '',
+    			'instructions' => 'Posts Single - This goes right below post comments',
     			'required' => 0,
     			'conditional_logic' => 0,
     			'wrapper' => array (
@@ -118,7 +118,7 @@ function a2pop_acf_settings() {
     			'label' => 'Related',
     			'name' => 'related',
     			'type' => 'text',
-    			'instructions' => '',
+    			'instructions' => 'Posts Single - This goes right below "read this next"',
     			'required' => 0,
     			'conditional_logic' => 0,
     			'wrapper' => array (
@@ -139,7 +139,7 @@ function a2pop_acf_settings() {
     			'label' => 'Popout 1',
     			'name' => 'popout_1',
     			'type' => 'text',
-    			'instructions' => '',
+    			'instructions' => 'Automatically appended to the page for popout ads',
     			'required' => 0,
     			'conditional_logic' => 0,
     			'wrapper' => array (
@@ -160,7 +160,7 @@ function a2pop_acf_settings() {
     			'label' => 'Popout 2',
     			'name' => 'popout_2',
     			'type' => 'text',
-    			'instructions' => '',
+    			'instructions' => 'Automatically appended to the page for popout ads',
     			'required' => 0,
     			'conditional_logic' => 0,
     			'wrapper' => array (
@@ -182,7 +182,7 @@ function a2pop_acf_settings() {
     			array (
     				'param' => 'options_page',
     				'operator' => '==',
-    				'value' => 'wealthcast',
+    				'value' => 'acf-options-wealthcast',
     			),
     		),
     	),
