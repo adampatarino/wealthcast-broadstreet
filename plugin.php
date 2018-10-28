@@ -174,7 +174,7 @@ if(class_exists('WP_Plugin_Wealtcast')) {
 	register_deactivation_hook(__FILE__, array('WP_Plugin_Wealtcast', 'deactivate'));
 	
 	// Get widget settings
-	require('widget');
+	require_once('widget.php');
 	
 	// instantiate the plugin class
 	$wc = new WP_Plugin_Wealtcast();
