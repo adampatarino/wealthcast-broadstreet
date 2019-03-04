@@ -3,7 +3,7 @@
 Plugin Name: Wealthcast
 Plugin URI: 
 Description: Ads via Wealthcast
-Version: 0.1.5
+Version: 0.1.6
 Author: Adam Patarino
 Author URI: http://wealthcastmedia.com
 License: GPL2
@@ -12,7 +12,7 @@ GitHub Branch: master
 */
 
 if(!class_exists('WP_Plugin_Wealtcast')) {
-	class WP_Plugin_Wealtcast {
+	class WP_Plugin_Wealtcast {		
 		/**
 		 * Construct the plugin object
 		 */
@@ -25,15 +25,17 @@ if(!class_exists('WP_Plugin_Wealtcast')) {
 			$this->enqueue();
 			$this->feederboards();
 			$this->popouts();
-
 		} // END public function __construct
 		
 		/**
 		 * Add basescript to header
 		 */
 		public function basescript() {
-			add_action('wp_head', 'wc_basescript');
-			function wc_basescript() { 
+			if(!function_exists('get_field')) return '';
+			$bs_on = get_field('wc_bs_enabled','options');
+			$gfp_on = get_field('wc_gfp_enabled','options');
+			
+			function wc_bs_basescript() {				
 				global $post;
 				$keywords = array();
 				
@@ -65,7 +67,46 @@ if(!class_exists('WP_Plugin_Wealtcast')) {
 						})
 					});
 				</script>
-			<?php }
+				<?php 
+			}
+			
+			function wc_gfp_basescript() {
+				$network_id = get_field('wc_gfp_network_id','options');
+				$website_key = get_field('wc_gfp_website_key','options');
+				$ads = get_field('wc_gfp_ad_units','options');
+				var_dump($ads);
+				print_r($ads);
+				?>
+				<!-- Wealthcast Init GFP -->
+				<script async='async' src='https://www.googletagservices.com/tag/js/gpt.js'></script>
+				<script>
+				  var gptadslots = [];
+				  var googletag = googletag || {cmd:[]};
+				</script>
+				
+				<script>
+					googletag.cmd.push(function() {
+						<?php foreach($ads as $ad) : ?>
+						gptadslots.push(
+							googletag.defineSlot('/<?php echo $network_id; ?>/<?php echo $ad["code"]?>', <?php if($ad["sizes"]) echo "[" . implode($ad["sizes"],",") . "]";?>, "<?php echo $ad["unit_id"]?>")
+							.addService(googletag.pubads())
+						);
+						<?php endforeach; ?>
+					});
+					
+					googletag.pubads().enableSingleRequest();
+					googletag.pubads().setTargeting('website', ['<?php echo $website_key; ?>']);
+					googletag.pubads().collapseEmptyDivs();
+					googletag.pubads().setCentering(true);
+					googletag.enableServices();
+				</script>
+					
+				<?php 
+			}
+			
+			if($bs_on) add_action('wp_head', 'wc_bs_basescript');
+			if($gfp_on) add_action('wp_head', 'wc_gfp_basescript');
+			
 		}
 		/**
 		 * Enqueue plugin assets
@@ -82,10 +123,20 @@ if(!class_exists('WP_Plugin_Wealtcast')) {
 		 */
 		public function display_zone($location) {
 			if(!function_exists('get_field')) return '';
-		    $zoneid = get_field($location, 'options');
-		    if(!$zoneid) return '';
-		    if($alt) return '<div style="text-align: center;"><broadstreet-zone alt-zone-id="'. $zoneid .'"></broadstreet-zone></div>';
-		    return '<div style="text-align: center;"><broadstreet-zone zone-id="'. $zoneid .'" soft-keywords="true"></broadstreet-zone></div>';
+			
+			$code = '';
+			
+			if(get_field('wc_bs_enabled','options')) {
+				$zoneid = get_field($location, 'options');
+			    if($zoneid) $code .= '<div style="text-align: center;"><broadstreet-zone zone-id="'. $zoneid .'" soft-keywords="true"></broadstreet-zone></div>';
+			}
+			
+			if(get_field('wc_gfp_enabled','options')) {
+				$zone = get_field('wc_gfp_ad_units', 'options')['gfp_' . $location];
+				if($zone) $code .= '<div id="'. $zone['unit_id'] .'"><script>googletag.cmd.push(function() { googletag.display('. $zone['unit_id'] .'); });</script></div>';
+		    }
+			
+			return $code;
 		}
 		
 		/**
@@ -158,7 +209,8 @@ if(!class_exists('WP_Plugin_Wealtcast')) {
 			/**
 			 * Require settings fields
 			 */
-			require_once("settings.php");
+			// require_once("settings.php");
+			
 		}
 
 
