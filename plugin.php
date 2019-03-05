@@ -35,6 +35,7 @@ if(!class_exists('WP_Plugin_Wealtcast')) {
 			$bs_on = get_field('wc_bs_enabled','options');
 			$gfp_on = get_field('wc_gfp_enabled','options');
 			
+			
 			function wc_bs_basescript() {				
 				global $post;
 				$keywords = array();
@@ -74,8 +75,7 @@ if(!class_exists('WP_Plugin_Wealtcast')) {
 				$network_id = get_field('wc_gfp_network_id','options');
 				$website_key = get_field('wc_gfp_website_key','options');
 				$ads = get_field('wc_gfp_ad_units','options');
-				var_dump($ads);
-				print_r($ads);
+				$pw_on = get_field('wc_pw_enabled', 'options');
 				?>
 				<!-- Wealthcast Init GFP -->
 				<script async='async' src='https://www.googletagservices.com/tag/js/gpt.js'></script>
@@ -83,6 +83,8 @@ if(!class_exists('WP_Plugin_Wealtcast')) {
 				  var gptadslots = [];
 				  var googletag = googletag || {cmd:[]};
 				</script>
+				
+				<?php if($pw_on) the_field('wc_pw_scripts','options'); ?>
 				
 				<script>
 					googletag.cmd.push(function() {
