@@ -88,19 +88,19 @@ if(!class_exists('WP_Plugin_Wealtcast')) {
 				
 				<script>
 					googletag.cmd.push(function() {
-						<?php foreach($ads as $ad) : ?>
+						<?php foreach($ads as $ad) : if($ad['code']) : ?>
 						gptadslots.push(
 							googletag.defineSlot('/<?php echo $network_id; ?>/<?php echo $ad["code"]?>', <?php if($ad["sizes"]) echo "[" . implode($ad["sizes"],",") . "]";?>, "<?php echo $ad["unit_id"]?>")
 							.addService(googletag.pubads())
 						);
-						<?php endforeach; ?>
+						<?php endif; endforeach; ?>
+						
+						googletag.pubads().enableSingleRequest();
+						googletag.pubads().setTargeting('website', ['<?php echo $website_key; ?>']);
+						googletag.pubads().collapseEmptyDivs();
+						googletag.pubads().setCentering(true);
+						googletag.enableServices();
 					});
-					
-					googletag.pubads().enableSingleRequest();
-					googletag.pubads().setTargeting('website', ['<?php echo $website_key; ?>']);
-					googletag.pubads().collapseEmptyDivs();
-					googletag.pubads().setCentering(true);
-					googletag.enableServices();
 				</script>
 					
 				<?php 
@@ -135,7 +135,7 @@ if(!class_exists('WP_Plugin_Wealtcast')) {
 			
 			if(get_field('wc_gfp_enabled','options')) {
 				$zone = get_field('wc_gfp_ad_units', 'options')['gfp_' . $location];
-				if($zone) $code .= '<div id="'. $zone['unit_id'] .'"><script>googletag.cmd.push(function() { googletag.display('. $zone['unit_id'] .'); });</script></div>';
+				if($zone) $code .= '<div id="'. $zone['unit_id'] .'"><script>googletag.cmd.push(function() { googletag.display("'. $zone['unit_id'] .'"); });</script></div>';
 		    }
 			
 			return $code;
