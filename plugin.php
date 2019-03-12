@@ -3,7 +3,7 @@
 Plugin Name: Wealthcast
 Plugin URI: 
 Description: Ads via Wealthcast
-Version: 0.2.0
+Version: 0.2.1
 Author: Adam Patarino
 Author URI: http://wealthcastmedia.com
 License: GPL2
@@ -19,10 +19,11 @@ if(!class_exists('WP_Plugin_Wealtcast')) {
 		public function __construct() {
 			// Initialize Settings
 			$this->plugin_settings();
-
+			
 			// Setup Plugin
 			$this->basescript();
 			$this->enqueue();
+			$this->adx_redirect();
 			$this->feederboards();
 			$this->popouts();
 		} // END public function __construct
@@ -119,6 +120,32 @@ if(!class_exists('WP_Plugin_Wealtcast')) {
 			    wp_enqueue_style( 'wccss', plugins_url( '/style.css', __FILE__ ) );
 			}
 		} // end public function enqueue
+		
+		/**
+		 * Serve Ads.txt for AdX
+		 */
+		public static function adx_redirect() {
+			/**
+			 * Register the rewrite rule for /ads.txt request.
+			 */
+			function wc_adstxt_rewrite() {
+			    add_rewrite_rule( '^ads\.txt$', 'index.php?wc_adstxt=true', 'top' );
+			}
+			add_action( 'init', 'wc_adstxt_rewrite', 10 );
+			 
+			/*
+			 * Hook the parse_request action and serve the ads.txt when custom query variable is set to 'true'.
+			 */
+			function wc_adstxt_request( $wp ) {
+			    if ( $wp->query_vars["name"] == "ads.txt" ) {
+			        header( 'Content-Type: text/plain' );
+
+			        echo file_get_contents( plugin_dir_path( __FILE__ ) . '/ads.txt' );
+			        exit;
+			    }
+			}
+			add_action( 'parse_request', 'wc_adstxt_request', 10, 1 );
+		}
 		
 		/**
 		 * WC Display Function
