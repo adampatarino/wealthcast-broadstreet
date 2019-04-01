@@ -1,7 +1,7 @@
 [
     {
         "key": "group_5bcf9eff364c8",
-        "title": "Wealthcast",
+        "title": "Sway",
         "fields": [
             {
                 "key": "field_5c7c2ff6cb17c",
@@ -254,7 +254,7 @@
             },
             {
                 "key": "field_5c7c311e795cd",
-                "label": "Google for Publishers",
+                "label": "Doubleclick for Publishers",
                 "name": "",
                 "type": "tab",
                 "instructions": "",
@@ -270,7 +270,7 @@
             },
             {
                 "key": "field_5c7c3143795ce",
-                "label": "Enable GFP Ads",
+                "label": "Enable DFP Ads",
                 "name": "wc_gfp_enabled",
                 "type": "true_false",
                 "instructions": "",
@@ -1491,6 +1491,130 @@
                         ]
                     }
                 ]
+            },
+            {
+                "key": "field_5c7dd6a1de33c",
+                "label": "Pubwise",
+                "name": "",
+                "type": "tab",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "placement": "top",
+                "endpoint": 0
+            },
+            {
+                "key": "field_5c7dd6cade33e",
+                "label": "Enable Pubwise",
+                "name": "wc_pw_enabled",
+                "type": "true_false",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "message": "",
+                "default_value": 0,
+                "ui": 1,
+                "ui_on_text": "Enabled",
+                "ui_off_text": "Disabled"
+            },
+            {
+                "key": "field_5c7dd6b3de33d",
+                "label": "Scripts",
+                "name": "wc_pw_scripts",
+                "type": "textarea",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": [
+                    [
+                        {
+                            "field": "field_5c7dd6cade33e",
+                            "operator": "==",
+                            "value": "1"
+                        }
+                    ]
+                ],
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "default_value": "",
+                "placeholder": "",
+                "maxlength": "",
+                "rows": 3,
+                "new_lines": ""
+            },
+            {
+                "key": "field_5ca280df0b7a1",
+                "label": "Amazon",
+                "name": "",
+                "type": "tab",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "placement": "top",
+                "endpoint": 0
+            },
+            {
+                "key": "field_5ca280f40b7a2",
+                "label": "Enable Amazon UAM",
+                "name": "wc_uam_enabled",
+                "type": "true_false",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "message": "",
+                "default_value": 0,
+                "ui": 1,
+                "ui_on_text": "Enabled",
+                "ui_off_text": "Disabled"
+            },
+            {
+                "key": "field_5ca281300b7a3",
+                "label": "Publisher ID",
+                "name": "wc_uam_publisher_id",
+                "type": "text",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": [
+                    [
+                        {
+                            "field": "field_5ca280f40b7a2",
+                            "operator": "==",
+                            "value": "1"
+                        }
+                    ]
+                ],
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "default_value": "ef625688-2729-4bf1-b3f5-d5b297fdc4a9",
+                "placeholder": "",
+                "prepend": "",
+                "append": "",
+                "maxlength": ""
             }
         ],
         "location": [
@@ -1498,7 +1622,7 @@
                 {
                     "param": "options_page",
                     "operator": "==",
-                    "value": "acf-options-wealthcast"
+                    "value": "acf-options-sway"
                 }
             ]
         ],

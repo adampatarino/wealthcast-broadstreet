@@ -1,9 +1,8 @@
-<?php
-if( function_exists('acf_add_local_field_group') ):
+<?php if( function_exists('acf_add_local_field_group') ):
 
 acf_add_local_field_group(array(
 	'key' => 'group_5bcf9eff364c8',
-	'title' => 'Wealthcast',
+	'title' => 'Sway',
 	'fields' => array(
 		array(
 			'key' => 'field_5c7c2ff6cb17c',
@@ -1565,13 +1564,75 @@ https://admanager.google.com/21792965829#inventory/customTargeting/keyId=1187491
 			'rows' => 3,
 			'new_lines' => '',
 		),
+		array(
+			'key' => 'field_5ca280df0b7a1',
+			'label' => 'Amazon',
+			'name' => '',
+			'type' => 'tab',
+			'instructions' => '',
+			'required' => 0,
+			'conditional_logic' => 0,
+			'wrapper' => array(
+				'width' => '',
+				'class' => '',
+				'id' => '',
+			),
+			'placement' => 'top',
+			'endpoint' => 0,
+		),
+		array(
+			'key' => 'field_5ca280f40b7a2',
+			'label' => 'Enable Amazon UAM',
+			'name' => 'wc_uam_enabled',
+			'type' => 'true_false',
+			'instructions' => '',
+			'required' => 0,
+			'conditional_logic' => 0,
+			'wrapper' => array(
+				'width' => '',
+				'class' => '',
+				'id' => '',
+			),
+			'message' => '',
+			'default_value' => 0,
+			'ui' => 1,
+			'ui_on_text' => 'Enabled',
+			'ui_off_text' => 'Disabled',
+		),
+		array(
+			'key' => 'field_5ca281300b7a3',
+			'label' => 'Publisher ID',
+			'name' => 'wc_uam_publisher_id',
+			'type' => 'text',
+			'instructions' => '',
+			'required' => 0,
+			'conditional_logic' => array(
+				array(
+					array(
+						'field' => 'field_5ca280f40b7a2',
+						'operator' => '==',
+						'value' => '1',
+					),
+				),
+			),
+			'wrapper' => array(
+				'width' => '',
+				'class' => '',
+				'id' => '',
+			),
+			'default_value' => 'ef625688-2729-4bf1-b3f5-d5b297fdc4a9',
+			'placeholder' => '',
+			'prepend' => '',
+			'append' => '',
+			'maxlength' => '',
+		),
 	),
 	'location' => array(
 		array(
 			array(
 				'param' => 'options_page',
 				'operator' => '==',
-				'value' => 'acf-options-wealthcast',
+				'value' => 'acf-options-sway',
 			),
 		),
 	),

@@ -1,11 +1,11 @@
 <?php
 /*
-Plugin Name: Wealthcast
+Plugin Name: Sway
 Plugin URI: 
-Description: Ads via Wealthcast
-Version: 0.2.1
+Description: Ads via Sway
+Version: 0.2.2
 Author: Adam Patarino
-Author URI: http://wealthcastmedia.com
+Author URI: http://swaymedia.io
 License: GPL2
 GitHub Plugin URI: https://github.com/adampatarino/wealthcast-broadstreet
 GitHub Branch: master
@@ -59,7 +59,7 @@ if(!class_exists('WP_Plugin_Wealtcast')) {
 				}
 				
 				?>
-				<!-- Wealthcast Init  -->
+				<!-- Sway Init  -->
 				<script src="https://cdn.broadstreetads.com/init-2.min.js" async></script>
 				<script>
 					document.addEventListener('broadstreetLoaded', function () {
@@ -77,14 +77,16 @@ if(!class_exists('WP_Plugin_Wealtcast')) {
 				$website_key = get_field('wc_gfp_website_key','options');
 				$ads = get_field('wc_gfp_ad_units','options');
 				$pw_on = get_field('wc_pw_enabled', 'options');
+				$uam_on = get_field('wc_uam_enabled', 'options');
 				?>
-				<!-- Wealthcast Init GFP -->
+				<!-- Sway Init GFP -->
 				<script async='async' src='https://www.googletagservices.com/tag/js/gpt.js'></script>
 				<script>
 				  var gptadslots = [];
 				  var googletag = googletag || {cmd:[]};
 				</script>
 				
+				<!-- Pubwise Integration -->
 				<?php if($pw_on) the_field('wc_pw_scripts','options'); ?>
 				
 				<script>
@@ -104,7 +106,36 @@ if(!class_exists('WP_Plugin_Wealtcast')) {
 					});
 				</script>
 					
-				<?php 
+				<?php if($uam_on) : ?>
+					<script>
+					//load the apstag.js library
+					!function(a9,a,p,s,t,A,g){if(a[a9])return;function q(c,r){a[a9]._Q.push([c,r])}a[a9]={init:function(){q("i",arguments)},fetchBids:function(){q("f",arguments)},setDisplayBids:function(){},targetingKeys:function(){return[]},_Q:[]};A=p.createElement(s);A.async=!0;A.src=t;g=p.getElementsByTagName(s)[0];g.parentNode.insertBefore(A,g)}("apstag",window,document,"script","//c.amazon-adsystem.com/aax2/apstag.js");
+
+					//initialize the apstag.js library on the page to allow bidding
+					apstag.init({
+					 pubID: '<?php echo get_field('wc_uam_publisher_id', 'options'); ?>', //enter your pub ID here as shown above, it must within quotes
+					 adServer: 'googletag'
+					});
+					apstag.fetchBids({
+					 slots: [
+						 <?php foreach($ads as $ad) : if($ad['code']) : ?>
+						 {
+						 	slotID: '<?php echo $ad["unit_id"]; ?>',
+						 	slotName: '/<?php echo $network_id; ?>/<?php echo $ad["code"]?>', 
+						 	sizes: <?php if($ad["sizes"]) echo "[" . implode($ad["sizes"],",") . "]";?>
+						},
+						<?php endif; endforeach; ?>
+					 ],
+					 timeout: 2e3
+					}, function(bids) {
+					 // set apstag targeting on googletag, then trigger the first DFP request in googletag's disableInitialLoad integration
+					 googletag.cmd.push(function(){
+						 apstag.setDisplayBids();
+						 googletag.pubads().refresh();
+					 });
+					}); 
+					</script>
+				<?php endif; 
 			}
 			
 			if($bs_on) add_action('wp_head', 'wc_bs_basescript');
@@ -228,7 +259,7 @@ if(!class_exists('WP_Plugin_Wealtcast')) {
 			function wc_register_settings() {
 			    if (function_exists('acf_add_options_page')) {
 					acf_add_options_sub_page(array(
-						'title' 	=> 'Wealthcast',
+						'title' 	=> 'Sway',
 						'parent' 	=> 'options-general.php',
 						'capability'	=> 'manage_options',
 						'redirect'		=> false
