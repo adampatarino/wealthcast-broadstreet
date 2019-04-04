@@ -3,7 +3,7 @@
 Plugin Name: Sway
 Plugin URI: 
 Description: Ads via Sway
-Version: 0.2.2
+Version: 0.2.3
 Author: Adam Patarino
 Author URI: http://swaymedia.io
 License: GPL2
@@ -23,7 +23,7 @@ if(!class_exists('WP_Plugin_Wealtcast')) {
 			// Setup Plugin
 			$this->basescript();
 			$this->enqueue();
-			$this->adx_redirect();
+			$this->ads_txt_redirect();
 			$this->feederboards();
 			$this->popouts();
 		} // END public function __construct
@@ -78,6 +78,16 @@ if(!class_exists('WP_Plugin_Wealtcast')) {
 				$ads = get_field('wc_gfp_ad_units','options');
 				$pw_on = get_field('wc_pw_enabled', 'options');
 				$uam_on = get_field('wc_uam_enabled', 'options');
+				
+				if(!is_archive()) {
+					foreach ($ads as $unit => $fields) {
+					    if ($unit == 'gfp_feedboard_3' || $unit == 'gfp_feedboard_6') {
+					        unset($ads[$unit]);
+					    }
+					}
+					$ads = array_diff($ads, ['gfp_feedboard_3', 'gfp_feedboard_6']);
+				}
+				
 				?>
 				<!-- Sway Init GFP -->
 				<script async='async' src='https://www.googletagservices.com/tag/js/gpt.js'></script>
@@ -93,8 +103,12 @@ if(!class_exists('WP_Plugin_Wealtcast')) {
 					googletag.cmd.push(function() {
 						<?php foreach($ads as $ad) : if($ad['code']) : ?>
 						gptadslots.push(
-							googletag.defineSlot('/<?php echo $network_id; ?>/<?php echo $ad["code"]?>', <?php if($ad["sizes"]) echo "[" . implode($ad["sizes"],",") . "]";?>, "<?php echo $ad["unit_id"]?>")
-							.addService(googletag.pubads())
+							<?php if($ad['po_enabled']) : ?>
+								googletag.defineOutOfPageSlot('/<?php echo $network_id; ?>/<?php echo $ad["code"]?>', "<?php echo $ad["unit_id"]?>").addService(googletag.pubads())
+							<?php else : ?>
+								googletag.defineSlot('/<?php echo $network_id; ?>/<?php echo $ad["code"]?>', <?php if($ad["sizes"]) echo "[" . implode($ad["sizes"],",") . "]";?>, "<?php echo $ad["unit_id"]?>")
+								.addService(googletag.pubads())
+							<?php endif; ?>
 						);
 						<?php endif; endforeach; ?>
 						
@@ -118,7 +132,7 @@ if(!class_exists('WP_Plugin_Wealtcast')) {
 					});
 					apstag.fetchBids({
 					 slots: [
-						 <?php foreach($ads as $ad) : if($ad['code']) : ?>
+						 <?php foreach($ads as $ad) : if($ad['code'] && !array_key_exists('po_enabled', $ad)) : ?>
 						 {
 						 	slotID: '<?php echo $ad["unit_id"]; ?>',
 						 	slotName: '/<?php echo $network_id; ?>/<?php echo $ad["code"]?>', 
@@ -155,7 +169,7 @@ if(!class_exists('WP_Plugin_Wealtcast')) {
 		/**
 		 * Serve Ads.txt for AdX
 		 */
-		public static function adx_redirect() {
+		public static function ads_txt_redirect() {
 			/**
 			 * Register the rewrite rule for /ads.txt request.
 			 */
@@ -227,11 +241,29 @@ if(!class_exists('WP_Plugin_Wealtcast')) {
 			add_action('wp_footer', 'wc_popout_zones');
 			function wc_popout_zones() {
 				if(!function_exists('get_field')) echo '';
-			    $po1 = get_field('popout_1', 'options');
-				$po2 = get_field('popout_2', 'options');
+			    
 				echo '<div class="wc-popouts" style="display: none;">';
-				if($po1) echo '<broadstreet-zone zone-id="'. $po1 .'" soft-keywords="true"></broadstreet-zone>';
-				if($po2) echo '<broadstreet-zone zone-id="'. $po2 .'" soft-keywords="true"></broadstreet-zone>';
+				
+					if(get_field('wc_broadstreet_enabled','options')) {
+						$po1 = get_field('popout_1', 'options');
+						$po2 = get_field('popout_2', 'options');
+						if($po1) echo '<broadstreet-zone zone-id="'. $po1 .'" soft-keywords="true"></broadstreet-zone>';
+						if($po2) echo '<broadstreet-zone zone-id="'. $po2 .'" soft-keywords="true"></broadstreet-zone>';
+					}
+					
+					
+					if(get_field('wc_gfp_enabled','options')) {
+						$gfp_po1 = get_field('wc_gfp_ad_units','options')['gfp_popout_1'];
+						$gfp_po2 = get_field('wc_gfp_ad_units','options')['gfp_popout_2'];
+						
+						if($gfp_po1['po_enabled']) {
+							echo '<div id='. $gfp_po1['unit_id'] .'><script> googletag.cmd.push(function() { googletag.display("'. $gfp_po1['unit_id'] .'"); });</script></div>';
+						}
+						if($gfp_po2['po_enabled']) {
+							echo '<div id='. $gfp_po2['unit_id'] .'><script> googletag.cmd.push(function() { googletag.display("'. $gfp_po2['unit_id'] .'"); });</script></div>';
+						}
+					}
+				
 				echo '</div>';
 			}
 		}
