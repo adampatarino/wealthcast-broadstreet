@@ -3,7 +3,7 @@
 Plugin Name: Sway
 Plugin URI: 
 Description: Ads via Sway
-Version: 0.2.3
+Version: 0.2.4
 Author: Adam Patarino
 Author URI: http://swaymedia.io
 License: GPL2
@@ -85,7 +85,14 @@ if(!class_exists('WP_Plugin_Wealtcast')) {
 					        unset($ads[$unit]);
 					    }
 					}
-					$ads = array_diff($ads, ['gfp_feedboard_3', 'gfp_feedboard_6']);
+				}
+				
+				if(!is_single()) {
+					foreach ($ads as $unit => $fields) {
+					    if ($unit == 'gfp_footer' || $unit == 'gfp_related') {
+					        unset($ads[$unit]);
+					    }
+					}
 				}
 				
 				?>
